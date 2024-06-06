@@ -1,4 +1,16 @@
 <?php
+//including header file 
+include ("../header.php");
+
+
+//including body file
+
+
+//include footer file
+
+
+
+?><?php
 session_start();
 if (!isset($_SESSION['user_id'])) {
     header('Location: login.php');

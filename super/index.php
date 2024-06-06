@@ -30,7 +30,7 @@ if (isset($_POST['login'])) {
 
         // Redirect based on user role
         if ($_SESSION['role'] == "Superadmin") {
-            header("Location: super/dashboard.php");
+            header("Location: dashboard.php");
         } elseif ($_SESSION['role'] == "admin") {
             header("Location: admin/farm_dashboard.php");
         } elseif ($_SESSION['role'] == "user") {

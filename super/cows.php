@@ -1,4 +1,16 @@
 <?php
+//including header file 
+include ("header.php");
+
+
+//including body file
+
+
+//include footer file
+
+
+
+?><?php
 include('../includes/config.php'); 
 
 // Handle Add Cow (POST Request)

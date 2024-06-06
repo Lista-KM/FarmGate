@@ -1,5 +1,19 @@
+
 <?php
-session_start();
+//including header file 
+include ("../head.php");
+
+
+//including body file
+
+
+//include footer file
+
+
+
+?>
+<?php
+
 include '../includes/config.php';
 
 // Check if user_id is set in the session
@@ -58,88 +72,10 @@ if ($stmt) {
 </html>
 
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Farm Dashboard</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
-    <script src="https://kit.fontawesome.com/your-font-awesome-kit.js" crossorigin="anonymous"></script>
-    <style>
-        .sidebar {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            bottom: 0;
-            width: 240px;
-            background-color: #333;
-            color: grey;
-            padding-top: 3.5rem;
-            z-index: 1000;
-        }
-        .sidebar ul {
-            padding: 0;
-            list-style-type: none;
-        }
-        .sidebar li {
-            padding: 0.5rem;
-        }
-        .sidebar a {
-            display: block;
-            padding: 0.5rem;
-            color: #fff;
-            text-decoration: none;
-            border-radius: 0.25rem;
-            transition: background-color 0.3s ease;
-        }
-        .sidebar a:hover {
-            background-color: #555;
-        }
-        .main-content {
-            margin-left: 240px;
-        }
-        .sidebar-toggle {
-            position: fixed;
-            top: 1rem;
-            left: 1rem;
-            z-index: 1001;
-            background-color: #333;
-            color: #ffffff;
-            border: none;
-            padding: 0.5rem 1rem;
-            cursor: pointer;
-        }
-    </style>
-</head>
-<body class="bg-gray-100">
-
-<div class="sidebar" id="sidebar">
-    <ul>
-        <li><a href="farm_dashboard.php">Dashboard</a></li>
-        <li><a href="cows.php">Cow Records</a></li>
-        <li><a href="milk.php">Milk Production</a></li>
-        <li><a href="users.php">User Management</a></li>
-        <li><a href="#">Feed Management</a></li>
-        <li><a href="#">Animal Health</a></li>
-        <li><a href="#">Farm Expenses</a></li>
-        <li><a href="#">Breeding</a></li>
-    </ul>
-</div>
-
-<div class="main-content">
-    <button class="sidebar-toggle" id="sidebar-toggle"><i class="fas fa-bars"></i></button>
-
-    <!-- Personalized Welcome Message -->
-    <div class="bg-blue-500 text-white p-4 rounded-lg shadow-md mb-4 mt-4">
-        <h1 class="text-2xl font-bold">Welcome to <?php echo htmlspecialchars($farmName); ?>, <?php echo htmlspecialchars($userName); ?>!</h1>
-    </div>
 
     <!-- Main content goes here -->
     <?php
     include '../includes/config.php';  
-
     // Fetch cow count
     $totalCowsQuery = "SELECT COUNT(*) as total_cows FROM cows";
     $totalCowsResult = $conn->query($totalCowsQuery);
@@ -170,7 +106,10 @@ if ($stmt) {
         return $totalCows;
     }
     ?>
-
+<!-- Personalized Welcome Message -->
+<div class="bg-blue-500 text-white p-4 rounded-lg shadow-md mb-4 mt-4">
+        <h1 class="text-2xl font-bold">Welcome to <?php echo htmlspecialchars($farmName); ?>, <?php echo htmlspecialchars($userName); ?>!</h1>
+    </div>
 <div class="flex flex-wrap -mx-4 mb-8">
     <div class="w-full md:w-1/3 px-4"> 
         <div class="bg-white p-8 rounded-lg shadow-md h-full">
@@ -410,6 +349,7 @@ window.onload = fetchData;
                        ), 0) AS total_dev
                 FROM milk_records mr 
                 JOIN cows c ON mr.name = c.id
+                WHERE mr.date = '$currentDate'
                 GROUP BY mr.date, c.name
                 ORDER BY c.name ASC"; 
 
@@ -468,3 +408,4 @@ window.onload = fetchData;
 </div>
 </body>
 </html>
+

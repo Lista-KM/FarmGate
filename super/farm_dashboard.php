@@ -1,4 +1,16 @@
 <?php
+//including header file 
+include ("../head.php");
+
+
+//including body file
+
+
+//include footer file
+
+
+
+?><?php
 session_start();
 include '../includes/config.php';
 
@@ -119,23 +131,9 @@ if ($stmt) {
         }
     </style>
 </head>
-<body class="bg-gray-100">
 
-<div class="sidebar" id="sidebar">
-    <ul>
-        <li><a href="farm_dashboard.php">Dashboard</a></li>
-        <li><a href="cows.php">Cow Records</a></li>
-        <li><a href="milk.php">Milk Production</a></li>
-        <li><a href="users.php">User Management</a></li>
-        <li><a href="#">Feed Management</a></li>
-        <li><a href="#">Animal Health</a></li>
-        <li><a href="#">Farm Expenses</a></li>
-        <li><a href="#">Breeding</a></li>
-    </ul>
-</div>
 
-<div class="main-content">
-    <button class="sidebar-toggle" id="sidebar-toggle"><i class="fas fa-bars"></i></button>
+
 
     <!-- Personalized Welcome Message -->
     <div class="bg-blue-500 text-white p-4 rounded-lg shadow-md mb-4 mt-4">
@@ -416,6 +414,7 @@ window.onload = fetchData;
                        ), 0) AS total_dev
                 FROM milk_records mr 
                 JOIN cows c ON mr.name = c.id
+                WHERE mr.date = '$currentDate'
                 GROUP BY mr.date, c.name
                 ORDER BY c.name ASC"; 
 

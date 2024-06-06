@@ -1,4 +1,16 @@
-<!DOCTYPE html>
+<?php
+//including header file 
+include ("header.php");
+
+
+//including body file
+
+
+//include footer file
+
+
+
+?><!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">

@@ -1,4 +1,16 @@
 <?php
+//including header file 
+include ("../head.php");
+
+
+//including body file
+
+
+//include footer file
+
+
+
+?><?php
 include '../includes/config.php'; // Ensure this file includes the $conn database connection
 
 // Fetch total cow count
@@ -31,130 +43,6 @@ $milkResult = $conn->query($milkQuery);
 $milkData = $milkResult->fetch_assoc();
 $totalYields = $milkData['total_yields'] ?? 0;
 ?>
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Farm Dashboard</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
-    <script src="https://kit.fontawesome.com/your-font-awesome-kit.js" crossorigin="anonymous"></script>
-    <style>
-        /* Style for the sidebar */
-        .sidebar {
-            display: none; /* Initially hide the sidebar */
-            position: fixed;
-            top: 0;
-            left: 0;
-            bottom: 0;
-            width: 240px;
-            background-color: #333;
-            color: grey;
-            padding-top: 3.5rem;
-            z-index: 1000;
-        }
-
-        .sidebar ul {
-            padding: 0;
-            list-style-type: none;
-        }
-
-        .sidebar li {
-            padding: 0.5rem; /* Adjusted padding */
-        }
-
-        .sidebar a {
-            display: block;
-            padding: 0.5rem;
-            color: #fff;
-            text-decoration: none;
-            border-radius: 0.25rem; /* Added border radius */
-            transition: background-color 0.3s ease;
-        }
-
-        .sidebar a:hover {
-            background-color: #555; /* Hover color */
-        }
-
-        /* Style for the main content area */
-        .main-content {
-            margin-left: 240px; /* Same width as the sidebar */
-        }
-
-        /* Style for the sidebar toggle button */
-        .sidebar-toggle {
-            position: fixed;
-            top: 1rem;
-            left: 1rem;
-            z-index: 1001; /* Ensure it's above the sidebar */
-            background-color: #333;
-            color: #ffffff;
-            border: none;
-            padding: 0.5rem 1rem;
-            cursor: pointer;
-        }
-        .milk-table {
-            width: 100%;
-            margin-top: 20px; /* Adjust this margin as needed */
-            border-collapse: collapse;
-            background: #FFFFFF;
-            table-layout: fixed;
-        }
-        .milk-table th, .milk-table td {
-            border: 1px solid #CCCCCC;
-            padding: 10px;
-            text-align: left;
-            word-wrap: break-word;
-        }
-        .milk-table th {
-            background: #2C478D;
-            color: #FFFFFF;
-        }
-        .milk-table td .text-zinc-500 {
-            color: #999999;
-        }
-        .milk-table td .text-green-500 {
-            color: #00FF00;
-        }
-        .milk-table td .text-red-500 {
-            color: #FF0000;
-        }
-        .summary {
-            background: #2C478D;
-            color: #FFFFFF;
-            padding: 20px;
-            margin-top: 30px;
-            border-radius: 15px;
-        }
-        .summary h2 {
-            font-weight: 800;
-            font-size: 1.5rem;
-            margin: 0 0 10px 0;
-        }
-        .summary p {
-            font-size: 1rem;
-            margin: 4px 0;
-        }
-    </style>
-</head>
-<body class="bg-gray-100">
-
-<div class="sidebar" id="sidebar">
-    <ul>
-        <li><a href="farm_dashboard.php">Dashboard</a></li>
-        <li><a href="cows.php">Cow Records</a></li>
-        <li><a href="milk.php">Milk Production</a></li>
-        <li><a href="users.php">User Management</a></li>
-        <li><a href="#">Feed Management</a></li>
-        <li><a href="#">Animal Health</a></li>
-        <li><a href="#">Farm Expenses</a></li>
-        <li><a href="#">Breeding</a></li>
-    </ul>
-</div>
-
-<div class="main-content">
-    <button class="sidebar-toggle" id="sidebar-toggle"><i class="fas fa-bars"></i></button>
 
     <!-- Main content goes here -->
     <div class="bg-white p-8 rounded-lg shadow-md mb-8 mt-8">
@@ -211,20 +99,128 @@ $totalYields = $milkData['total_yields'] ?? 0;
         </div>
     </div>
 
-    <div class="table-container">
-        <table class="milk-table">
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Name</th>
-                    <th>Morning</th>
-                    <th>Noon</th>
-                    <th>Evening</th>
-                    <th>Total</th>
-                </tr>
-            </thead>
-            <tbody>
-            <?php
+    <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #FFFFFF; 
+            padding: 20px; 
+            box-sizing: border-box; 
+        }
+
+        .header {
+            background: none; 
+            color: #000000; 
+            text-align: center;
+            padding: 20px; 
+        }
+
+        .header h1 {
+            font-weight: 800;
+            font-size: 2rem; 
+            line-height: 1.3;
+            margin: 0;
+            color: #000000;
+        }
+
+        .button-container {
+            text-align: right;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        .button-container button {
+            background: #2C478D;
+            color: #FFFFFF;
+            font-weight: 700;
+            font-size: 1rem; 
+            line-height: 1.3;
+            padding: 10px 20px; 
+            border: none;
+            border-radius: 5px; 
+            cursor: pointer;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #FFFFFF;
+            table-layout: fixed;
+        }
+
+        th, td {
+            border: 1px solid #CCCCCC;
+            padding: 10px;
+            text-align: left;
+            word-wrap: break-word;
+        }
+
+        th {
+            background: #2C478D;
+            color: #FFFFFF;
+        }
+
+        td .text-zinc-500 {
+            color: #999999;
+        }
+
+        td .text-green-500 {
+            color: #00FF00;
+        }
+
+        td .text-red-500 {
+            color: #FF0000;
+        }
+
+        .summary {
+            background: #2C478D;
+            color: #FFFFFF;
+            padding: 20px;
+            margin-top: 30px;
+            border-radius: 15px;
+        }
+
+        .summary h2 {
+            font-weight: 800;
+            font-size: 1.5rem;
+            margin: 0 0 10px 0;
+        }
+
+        .summary p {
+            font-size: 1rem;
+            margin: 4px 0;
+        }
+
+        
+
+    </style>
+    <title>Milk Collection</title>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Milk Records</h1>
+        </div>
+        
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Name</th>
+                        <th>Morning</th>
+                        <th>Noon</th>
+                        <th>Evening</th>
+                        <th>Total</th>
+                        
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <?php
                 include("../includes/config.php");
 
                 $currentDate = date('Y-m-d');
@@ -319,15 +315,6 @@ $totalYields = $milkData['total_yields'] ?? 0;
         <p>Average Yield: <?php echo number_format($averageYield, 2); ?></p>
     </div>
 </div>
-
-<script>
-    // Function to toggle the sidebar visibility
-    document.getElementById('sidebar-toggle').addEventListener('click', function() {
-        const sidebar = document.getElementById('sidebar');
-        sidebar.style.display = sidebar.style.display === 'none' ? 'block' : 'none';
-    });
-</script>
-
 </body>
 </html>
 
