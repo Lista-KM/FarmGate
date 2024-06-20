@@ -269,18 +269,15 @@ include("../header.php");
   </div>
 </div>
 
-        <div id="stockLevelsContent">
+<div id="stockLevelsContent">
           <?php
-          include("../stocklevels.php");
+          include("stocklevels.php");
           ?>
 
         </div>
-        <div id="feedOrdersContent" style="display: none;">
-          <!-- Content for Feed Orders tab -->
-          <?php
-          include("../stocklevels.php");
-          ?>
-        </div>
+        
+        
+        
         <div id="feedingProgramContent" style="display: none;">
           <!-- Content for Feeding Program tab -->
           <?php

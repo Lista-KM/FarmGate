@@ -86,8 +86,16 @@ $result = $conn->query($sql);
                   </form>
             </div>
         </div>
-
+       
+        </div>
         <div class="bg-white shadow rounded-lg overflow-hidden">
+    <div class="flex justify-between items-center p-4 border-b">
+        <a href="groups.php" class="bg-yellow-500 text-white px-4 py-2 rounded-lg border border-yellow-600">Cow Groups</a>
+    </div>
+</div>
+
+
+            <div class="bg-white shadow rounded-lg overflow-hidden">
             <div class="flex justify-between items-center p-4 border-b">
                 <button class="bg-zinc-200 text-zinc-700 px-4 py-2 rounded">Print</button>
                 <div>

@@ -4,6 +4,17 @@ include("includes/config.php"); // Include your database connection file
 $success_message = "";
 $error_message = "";
 
+// Fetch feed items for the dropdown
+$feed_items = [];
+$feedQuery = "SELECT id, item_name FROM feed_items";
+$result = $conn->query($feedQuery);
+
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $feed_items[] = $row;
+    }
+}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Check if the form is submitted
     if (isset($_POST['submit'])) {
@@ -182,46 +193,49 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
         <?php endif; ?>
         <form method="POST" action="">
-    <div class="grid grid-cols-4 gap-4 mb-4">
-        <div>
-            <label class="block text-sm font-semibold text-green-600">Date</label>
-            <input type="date" name="formulation_date" class="mt-1 block w-full border border-green-600 rounded-md p-2" />
-        </div>
-        <div>
-            <label class="block text-sm font-semibold text-green-600">Item</label>
-            <select name="item_name" class="mt-1 block w-full border border-green-600 rounded-md p-2">
-                <option value="">Select item...</option>
-                <option value="DAIRY MI">DAIRY MI</option>
-                <!-- Add more options as needed -->
-            </select>
-        </div>
-        <div>
-            <label class="block text-sm font-semibold text-green-600">Quantity</label>
-            <input type="text" name="quantity" class="mt-1 block w-full border border-green-600 rounded-md p-2" placeholder="Quantity" />
-        </div>
-        <div class="flex items-end">
-            <button type="submit" name="submit" class="bg-yellow-500 text-white py-2 px-4 rounded-md">Submit</button>
-        </div>
-    </div>
-    <h3 class="text-lg font-semibold text-blue-600 mb-4">Contents</h3>
-    <div class="grid grid-cols-4 gap-4">
-        <div>
-            <label class="block text-sm font-semibold text-green-600">Raw Material</label>
-            <select class="mt-1 block w-full border border-green-600 rounded-md p-2">
-                <option value="">Select item...</option>
-                <!-- Add options for raw materials as needed -->
-            </select>
-        </div>
-        <div>
-            <label class="block text-sm font-semibold text-green-600">Quantity</label>
-            <input type="text" class="mt-1 block w-full border border-green-600 rounded-md p-2" placeholder="Quantity" />
-        </div>
-        <div class="flex items-end">
-            <button type="button" class="bg-yellow-500 text-white py-2 px-4 rounded-md">Submit</button>
-        </div>
-    </div>
-</form>
-
+            <div class="grid grid-cols-4 gap-4 mb-4">
+                <div>
+                    <label class="block text-sm font-semibold text-green-600">Date</label>
+                    <input type="date" name="formulation_date" class="mt-1 block w-full border border-green-600 rounded-md p-2" />
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-green-600">Item</label>
+                    <select id="itemSelect" name="item_name" class="w-full bg-transparent focus:outline-none">
+                        <option value="">Select item...</option>
+                        <?php
+                        // Populate options dynamically from the database
+                        foreach ($item_name as $feed_item) {
+                            echo "<option value='" . $feed_item['item_name'] . "'>" . $feed_item['item_name'] . "</option>";
+                        }
+                        ?>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-green-600">Quantity</label>
+                    <input type="text" name="quantity" class="mt-1 block w-full border border-green-600 rounded-md p-2" placeholder="Quantity" />
+                </div>
+                <div class="flex items-end">
+                    <button type="submit" name="submit" class="bg-yellow-500 text-white py-2 px-4 rounded-md">Submit</button>
+                </div>
+            </div>
+            <h3 class="text-lg font-semibold text-blue-600 mb-4">Contents</h3>
+            <div class="grid grid-cols-4 gap-4">
+                <div>
+                    <label class="block text-sm font-semibold text-green-600">Raw Material</label>
+                    <select class="mt-1 block w-full border border-green-600 rounded-md p-2">
+                        <option value="">Select item...</option>
+                        <!-- Add options for raw materials as needed -->
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-green-600">Quantity</label>
+                    <input type="text" class="mt-1 block w-full border border-green-600 rounded-md p-2" placeholder="Quantity" />
+                </div>
+                <div class="flex items-end">
+                    <button type="button" class="bg-yellow-500 text-white py-2 px-4 rounded-md">Submit</button>
+                </div>
+            </div>
+        </form>
     </div>
 
     <script>

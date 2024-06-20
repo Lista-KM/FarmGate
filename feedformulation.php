@@ -34,7 +34,7 @@ $result = $conn->query($sql);
             <th class="bg-zinc-200 p-2 text-left font-medium text-black block md:table-cell">Date</th>
             <th class="bg-zinc-200 p-2 text-left font-medium text-black block md:table-cell">Item</th>
             <th class="bg-zinc-200 p-2 text-left font-medium text-black block md:table-cell">Quantity</th>
-            <th class="bg-zinc-200 p-2 text-left font-medium text-black block md:table-cell">Actions</th>
+           <!--  <th class="bg-zinc-200 p-2 text-left font-medium text-black block md:table-cell">Actions</th> -->
           </tr>
         </thead>
         <tbody class="block md:table-row-group">
@@ -45,14 +45,14 @@ $result = $conn->query($sql);
                   echo "<td class='p-2 block md:table-cell'>" . $row["formulation_date"] . "</td>";
                   echo "<td class='p-2 block md:table-cell text-blue-500'>" . $row["item_name"] . "</td>";
                   echo "<td class='p-2 block md:table-cell'>" . $row["quantity"] . "</td>";
-                  echo "<td class='p-2 block md:table-cell'>
-                        <button class='bg-zinc-300 p-1 rounded'>
-                          <img aria-hidden='true' alt='edit' src='https://placehold.co/16x16' />
-                        </button>
-                        <button class='bg-red-500 p-1 rounded'>
-                          <img aria-hidden='true' alt='delete' src='https://placehold.co/16x16' />
-                        </button>
-                      </td>";
+                 // echo "<td class='p-2 block md:table-cell'>
+                  //      <button class='bg-zinc-300 p-1 rounded'>
+                    //      <img aria-hidden='true' alt='edit' src='https://placehold.co/16x16' />
+                    //    </button>
+                   //     <button class='bg-red-500 p-1 rounded'>
+                   //       <img aria-hidden='true' alt='delete' src='https://placehold.co/16x16' />
+                   //     </button>
+                   //   </td>";
                   echo "</tr>";
               }
           } else {

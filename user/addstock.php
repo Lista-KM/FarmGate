@@ -1,3 +1,45 @@
+<?php
+// Include the database configuration file
+include '../includes/config.php';
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Check if connection is established
+    if ($conn === false) {
+        die("ERROR: Could not connect. " . mysqli_connect_error());
+    }
+
+    // Prepare an insert statement
+    $sql = "INSERT INTO stock_levels (feed_name, quantity, unit, unit_price) VALUES (?, ?, ?, ?)";
+
+    if ($stmt = $conn->prepare($sql)) {
+        // Bind variables to the prepared statement as parameters
+        $stmt->bind_param("sdsd", $feed_name, $quantity, $unit, $unit_price);
+
+        // Set parameters
+        $feed_name = $_POST['feed_name'];
+        $quantity = $_POST['quantity'];
+        $unit = $_POST['unit']; // Ensure this corresponds to the name attribute of the select element
+        $unit_price = $_POST['unit_price'];
+
+        // Attempt to execute the prepared statement
+        if ($stmt->execute()) {
+            echo "<script>alert('Records added successfully.');</script>";
+            echo "<script>window.location.href = 'feeds.php';</script>";
+        } else {
+            echo "ERROR: Could not execute query: $sql. " . $conn->error;
+        }
+    } else {
+        echo "ERROR: Could not prepare statement: $sql. " . $conn->error;
+    }
+
+    // Close statement
+    $stmt->close();
+
+    // Close connection
+    $conn->close();
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -168,7 +210,10 @@
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
             <input type="text" name="feed_name" placeholder="Feed Name" class="input-field" required>
             <input type="number" name="quantity" placeholder="Quantity" class="input-field" required>
-            <input type="text" name="unit" placeholder="Unit" class="input-field" required>
+            <select name="unit" class="input-field" required>
+              <option value="kg">kg</option>
+              <option value="ltrs">ltrs</option>
+            </select>
             <input type="number" step="0.01" name="unit_price" placeholder="Unit Price" class="input-field" required>
           </div>
           <div class="flex justify-end">

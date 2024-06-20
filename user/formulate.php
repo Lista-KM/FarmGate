@@ -165,9 +165,6 @@
         // Prepare form data for submission
         let formData = new FormData(this);
 
-        // Log formData to verify it's correct
-        console.log('Form Data:', formData);
-
         // Send form data to the server using AJAX
         fetch('process_form.php', {
             method: 'POST',
@@ -204,7 +201,6 @@
         });
     });
 </script>
-
 
 </body>
 
