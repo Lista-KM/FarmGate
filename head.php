@@ -159,7 +159,7 @@ if ($stmt) {
         <li><a href="users.php">User Management</a></li>
         <li><a href="feeds.php">Feed Management</a></li>
         <li><a href="#">Animal Health</a></li>
-        <li><a href="#">Farm Expenses</a></li>
+        <li><a href="farm_expenses.php">Farm Expenses</a></li>
         <li><a href="#">Breeding</a></li>
     </ul>
 </div>
