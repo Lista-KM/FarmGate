@@ -59,68 +59,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $conn->close();
 }
 ?>
-<?php
-// Database connection (replace with your database credentials)
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "dfsms";
-
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-
-// Handle form submission
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $feed_date = $_POST['feed_date'];
-    $item_name = $_POST['item_name'];
-    $quantity = $_POST['quantity'];
-    $group_name = $_POST['group_name'];
-
-    // Insert data into daily_feeding table
-    $insertQuery = "INSERT INTO daily_feeding (feed_date, item_name, quantity, group_name) 
-                    VALUES ('$feed_date', '$item_name', '$quantity', '$group_name')";
-
-    if ($conn->query($insertQuery) === TRUE) {
-        echo "New record created successfully";
-    } else {
-        echo "Error: " . $insertQuery . "<br>" . $conn->error;
-    }
-
-    // Retrieve current stock levels for the selected item
-    $selectQuery = "SELECT id, quantity, consumed FROM stock_levels WHERE feed_name = '$item_name'";
-    $result = $conn->query($selectQuery);
-
-    if ($result->num_rows > 0) {
-        // Assuming there's only one row per item_name in stock_levels
-        $row = $result->fetch_assoc();
-        $current_quantity = $row['quantity'];
-        $current_consumed = $row['consumed'];
-
-        // Calculate new quantities
-        $new_quantity = $current_quantity - $quantity;
-        $new_consumed = $current_consumed + $quantity;
-
-        // Update stock_levels table
-        $updateQuery = "UPDATE stock_levels SET quantity = '$new_quantity', consumed = '$new_consumed' WHERE id = '" . $row['id'] . "'";
-        if ($conn->query($updateQuery) === TRUE) {
-            echo "Stock levels updated successfully";
-        } else {
-            echo "Error updating stock levels: " . $conn->error;
-        }
-    } else {
-        echo "No stock information found for item: " . $item_name;
-    }
-
-    // Close the database connection
-    $conn->close();
-}
-?>
-
 
 
 <!DOCTYPE html>
