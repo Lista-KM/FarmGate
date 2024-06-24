@@ -273,6 +273,24 @@ tfoot tr {
     background-color: #e2e8f0; /* Adjust background color */
     color: #1a202c; /* Adjust text color */
 }
+.summary {
+            background: #2C478D;
+            color: #FFFFFF;
+            padding: 20px;
+            margin-top: 30px;
+            border-radius: 15px;
+        }
+
+        .summary h2 {
+            font-weight: 800;
+            font-size: 1.5rem;
+            margin: 0 0 10px 0;
+        }
+
+        .summary p {
+            font-size: 1rem;
+            margin: 4px 0;
+        }
 
     </style>
 </head>
@@ -306,6 +324,7 @@ tfoot tr {
                 </div>
             </div>
         </div>
+        Feeding Expenses Breakdown
         <table id="feeding-expense-table" class="min-w-full bg-white border">
 <!-- Placeholder rows for group-wise totals -->
 <?php
@@ -396,47 +415,173 @@ $group_totals = array();
 </table>
 
         <!-- Grid layout for income and expenses sections -->
-        <div class="grid-two">
-            <!-- Expenses breakdown -->
-            <div class="expenses-section">
-                <div class="bg-zinc-800 text-white p-2 rounded-t">Expenses breakdown</div>
-                <!-- <div class="bg-blue-100 p-2 border-b border-zinc-300">
-                    Feeding Expenses <span class="float-right">Ksh 0.00</span>
-                </div> -->
-                <div class="bg-blue-100 p-2 border-b border-zinc-300">
-                    Breeding Expenses <span class="float-right">Ksh 0.00</span>
-                </div>
-                <div class="bg-blue-100 p-2 border-b border-zinc-300">
-                    Health Expenses <span class="float-right">Ksh 0.00</span>
-                </div>
-                <div class="bg-blue-100 p-2 border-b border-zinc-300">
-                    Fuel Expenses <span class="float-right">Ksh 0.00</span>
-                </div>
-                <div class="bg-blue-100 p-2 border-b border-zinc-300">
-                    Salaries <span class="float-right">Ksh 0.00</span>
-                </div>
-                <div class="bg-blue-100 p-2">Other Expense <span class="float-right">Ksh 0.00</span></div>
-                <div class="bg-blue-100 p-2">Total Expenses <span class="float-right">Ksh 0.00</span></div>
-            </div>
+      <!--  <div class="grid-two">
+    <!-- Expenses breakdown -->
+    <!--<div class="expenses-section">
+        <div class="bg-zinc-800 text-white p-2 rounded-t">Expenses breakdown</div>
+        
+     
+        <div class="bg-blue-100 p-2 border-b border-zinc-300" id="feeding-expense">
+            Feeding Expenses <span class="float-right" id="feeding-expense-value">Ksh 0.00</span>
+        </div>
+        <div class="bg-blue-100 p-2 border-b border-zinc-300" id="breeding-expense">
+            Breeding Expenses <span class="float-right" id="breeding-expense-value">Ksh 0.00</span>
+        </div>
+        <div class="bg-blue-100 p-2 border-b border-zinc-300" id="health-expense">
+            Health Expenses <span class="float-right" id="health-expense-value">Ksh 0.00</span>
+        </div>
+        <div class="bg-blue-100 p-2 border-b border-zinc-300" id="fuel-expense">
+            Fuel Expenses <span class="float-right" id="fuel-expense-value">Ksh 0.00</span>
+        </div>
+        <div class="bg-blue-100 p-2 border-b border-zinc-300" id="salaries">
+            Salaries <span class="float-right" id="salaries-value">Ksh 0.00</span>
+        </div>
+        <div class="bg-blue-100 p-2" id="other-expense">
+            Other Expense <span class="float-right" id="other-expense-value">Ksh 0.00</span>
+        </div>
+        <div class="bg-blue-100 p-2" id="total-expenses">
+            Total Expenses <span class="float-right" id="total-expenses-value">Ksh 0.00</span>
+        </div>
+    </div>
+</div> -->
+
 
             <!-- Income breakdown -->
             <div class="income-section">
-                <div class="bg-zinc-800 text-white p-2 rounded-t">Income breakdown</div>
+                <div class="bg-zinc-800 text-white p-2 rounded-t"></div>
                 <!-- Placeholder rows for income breakdown -->
                 <div class="bg-blue-100 p-2 border-b border-zinc-300">
-                    Income from milk sale: Ksh 0.00
+                   <!-- Income from milk sale: Ksh 0.00 -->
                 </div>
                 <div class="bg-blue-100 p-2">
-                    Income from cow sale: Ksh 0.00
+                   <!-- Income from cow sale: Ksh 0.00 -->
                 </div>
                 <div class="bg-blue-100 p-2">
-                    Income from other sources: Ksh 0.00
+                    <!--Income from other sources: Ksh 0.00 -->
                 </div>
             </div>
         </div>
     </div>
 
-    
+    <body>
+    <div class="container">
+        <div class="header">
+           <!-- <h1>Milk Records</h1>
+        </div>
+        
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Name</th>
+                        <th>Morning</th>
+                        <th>Noon</th>
+                        <th>Evening</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody> -->
+                    <?php
+                    include("../includes/config.php");
+
+                    $currentDate = date('Y-m-d');
+
+                    // Predefined price per liter
+                    $pricePerLiter = 55; // Example price
+
+                    // SQL query with deviation calculations for the current date
+                    $milkQuery = "
+                    SELECT mr.date, c.name, 
+                           SUM(mr.morning) AS morning, 
+                           SUM(mr.noon) AS noon, 
+                           SUM(mr.evening) AS evening,
+                           SUM(mr.morning + mr.noon + mr.evening) AS total,
+                           COALESCE(SUM(mr.morning) - (
+                               SELECT SUM(morning) 
+                               FROM milk_records mr2 
+                               WHERE mr2.name = mr.name AND mr2.date = DATE_SUB(mr.date, INTERVAL 1 DAY)
+                               GROUP BY mr2.name
+                           ), 0) AS morning_dev,
+                           COALESCE(SUM(mr.noon) - (
+                               SELECT SUM(noon) 
+                               FROM milk_records mr2 
+                               WHERE mr2.name = mr.name AND mr2.date = DATE_SUB(mr.date, INTERVAL 1 DAY)
+                               GROUP BY mr2.name
+                           ), 0) AS noon_dev,
+                           COALESCE(SUM(mr.evening) - (
+                               SELECT SUM(evening) 
+                               FROM milk_records mr2 
+                               WHERE mr2.name = mr.name AND mr2.date = DATE_SUB(mr.date, INTERVAL 1 DAY)
+                               GROUP BY mr2.name
+                           ), 0) AS evening_dev,
+                           COALESCE((SUM(mr.morning + mr.noon + mr.evening)) - (
+                               SELECT SUM(morning + noon + evening) 
+                               FROM milk_records mr2 
+                               WHERE mr2.name = mr.name AND mr2.date = DATE_SUB(mr.date, INTERVAL 1 DAY)
+                               GROUP BY mr2.name
+                           ), 0) AS total_dev
+                    FROM milk_records mr 
+                    JOIN cows c ON mr.name = c.id
+                    WHERE mr.date = '$currentDate'
+                    GROUP BY mr.date, c.name
+                    ORDER BY c.name ASC"; 
+
+                    $milkResult = $conn->query($milkQuery);
+
+                    $dailySummary = [
+                        'total' => 0,
+                        'count' => 0,
+                        'yields' => []
+                    ];
+
+                    while ($record = $milkResult->fetch_assoc()) {
+                        $date = $record['date'];
+                        $name = $record['name'];
+                        $morning = $record['morning'];
+                        $noon = $record['noon'];
+                        $evening = $record['evening'];
+                        $total = $record['total'];
+                        $morning_dev = $record['morning_dev'];
+                        $noon_dev = $record['noon_dev'];
+                        $evening_dev = $record['evening_dev'];
+                        $total_dev = $record['total_dev'];
+
+                        $dailySummary['total'] += $total;
+                        $dailySummary['count'] += 1;
+                        $dailySummary['yields'][] = $total;
+
+                        
+                    }
+
+                    // Calculate summary data
+                    $totalYields = array_sum($dailySummary['yields']);
+                    $numberOfCows = $dailySummary['count'];
+                    $lowestYield = min($dailySummary['yields']);
+                    $highestYield = max($dailySummary['yields']);
+                    $averageYield = $totalYields / $numberOfCows;
+
+                    // Calculate production value
+                    $productionValue = $totalYields * $pricePerLiter;
+
+                    ?>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="summary">
+            <h2>Daily Summary for <?php echo $currentDate; ?></h2>
+            <p>Total Yields: <?php echo $totalYields; ?></p>
+            <p>No of Cows: <?php echo $numberOfCows; ?></p>
+            <p>Lowest Yield: <?php echo $lowestYield; ?></p>
+            <p>Highest Yield: <?php echo $highestYield; ?></p>
+            <p>Average Yield: <?php echo number_format($averageYield, 2); ?></p>
+            <p>Production Value: <?php echo number_format($productionValue, 2); ?></p>
+        </div>
+    </div>
+</body>
+</html>
+
 
     <script>
     // Function to calculate total consumption by group
@@ -481,6 +626,31 @@ $group_totals = array();
 
     // Call the function when the page is loaded
     window.addEventListener('load', calculateTotalConsumption);
+
+   // document.addEventListener('DOMContentLoaded', function() {
+    // Sample data (replace with actual dynamic data fetching and calculation)
+  //   const feedingExpense = 5000;
+   //  const breedingExpense = 3000;
+  //   const healthExpense = 2000;
+   //  const fuelExpense = 1500;
+  //   const salariesExpense = 4000;
+  //   const otherExpense = 1000;
+
+    // Calculate total expenses
+  //   const totalExpenses = feedingExpense + breedingExpense + healthExpense + fuelExpense + salariesExpense + otherExpense;
+
+    // Update each expense category value
+   //  document.getElementById('feeding-expense-value').textContent = `Ksh ${feedingExpense.toFixed(2)}`;
+   //  document.getElementById('breeding-expense-value').textContent = `Ksh ${breedingExpense.toFixed(2)}`;
+   //  document.getElementById('health-expense-value').textContent = `Ksh ${healthExpense.toFixed(2)}`;
+   //  document.getElementById('fuel-expense-value').textContent = `Ksh ${fuelExpense.toFixed(2)}`;
+   //  document.getElementById('salaries-value').textContent = `Ksh ${salariesExpense.toFixed(2)}`;
+   //  document.getElementById('other-expense-value').textContent = `Ksh ${otherExpense.toFixed(2)}`;
+
+    // Update total expenses value
+    // document.getElementById('total-expenses-value').textContent = `Ksh ${totalExpenses.toFixed(2)}`;
+ //});
+
 </script>
 
 </body>

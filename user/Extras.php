@@ -332,3 +332,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   });
 </script>
 -->
+
+        <!-- Grid layout for income and expenses sections -->
+      <!--  <div class="grid-two">
+    Expenses breakdown -->
+    <!--<div class="expenses-section">
+        <div class="bg-zinc-800 text-white p-2 rounded-t">Expenses breakdown</div>
+        
+     
+        <div class="bg-blue-100 p-2 border-b border-zinc-300" id="feeding-expense">
+            Feeding Expenses <span class="float-right" id="feeding-expense-value">Ksh 0.00</span>
+        </div>
+        <div class="bg-blue-100 p-2 border-b border-zinc-300" id="breeding-expense">
+            Breeding Expenses <span class="float-right" id="breeding-expense-value">Ksh 0.00</span>
+        </div>
+        <div class="bg-blue-100 p-2 border-b border-zinc-300" id="health-expense">
+            Health Expenses <span class="float-right" id="health-expense-value">Ksh 0.00</span>
+        </div>
+        <div class="bg-blue-100 p-2 border-b border-zinc-300" id="fuel-expense">
+            Fuel Expenses <span class="float-right" id="fuel-expense-value">Ksh 0.00</span>
+        </div>
+        <div class="bg-blue-100 p-2 border-b border-zinc-300" id="salaries">
+            Salaries <span class="float-right" id="salaries-value">Ksh 0.00</span>
+        </div>
+        <div class="bg-blue-100 p-2" id="other-expense">
+            Other Expense <span class="float-right" id="other-expense-value">Ksh 0.00</span>
+        </div>
+        <div class="bg-blue-100 p-2" id="total-expenses">
+            Total Expenses <span class="float-right" id="total-expenses-value">Ksh 0.00</span>
+        </div>
+    </div>
+</div> -->

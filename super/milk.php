@@ -2,13 +2,9 @@
 //including header file 
 include ("header.php");
 
-
 //including body file
 
-
 //include footer file
-
-
 
 ?><!DOCTYPE html>
 <html lang="en">
@@ -189,9 +185,9 @@ include ("header.php");
     <title>Milk Collection</title>
 </head>
 <body>
-    <div class="container">
+<div class="container">
         <div class="header">
-            <h1>Milk Collection</h1>
+            <h1>Milk Records</h1>
         </div>
         <div class="button-container">
             <!-- Set onclick attribute to redirect to add_milk.php -->
@@ -207,10 +203,11 @@ include ("header.php");
                         <th>Noon</th>
                         <th>Evening</th>
                         <th>Total</th>
+                        
                     </tr>
-                </thead>
-                <tbody>
-                <?php
+                    </thead>
+                    <tbody>
+                    <?php
                 include("../includes/config.php");
 
                 $currentDate = date('Y-m-d');
@@ -307,3 +304,4 @@ include ("header.php");
 </div>
 </body>
 </html>
+

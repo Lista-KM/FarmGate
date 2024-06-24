@@ -2,15 +2,11 @@
 //including header file 
 include ("../header.php");
 
-
 //including body file
 
-
 //include footer file
-
-
-
-?><!DOCTYPE html>
+?>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -186,12 +182,12 @@ include ("../header.php");
         }
 
     </style>
-    <title>Milk Collection</title>
+   <title>Milk Collection</title>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>Milk Collection</h1>
+            <h1>Milk Records</h1>
         </div>
         <div class="button-container">
             <!-- Set onclick attribute to redirect to add_milk.php -->
@@ -210,100 +206,109 @@ include ("../header.php");
                     </tr>
                 </thead>
                 <tbody>
-                <?php
-                include("../includes/config.php");
+                    <?php
+                    include("../includes/config.php");
 
-                $currentDate = date('Y-m-d');
+                    $currentDate = date('Y-m-d');
 
-                // SQL query with deviation calculations for the current date
-                $milkQuery = "
-                SELECT mr.date, c.name, 
-    SUM(mr.morning) AS morning, 
-    SUM(mr.noon) AS noon, 
-    SUM(mr.evening) AS evening,
-    SUM(mr.morning + mr.noon + mr.evening) AS total,
-    COALESCE(SUM(mr.morning) - (
-      SELECT SUM(morning) 
-      FROM milk_records mr2 
-      WHERE mr2.name = mr.name AND mr2.date = DATE_SUB(mr.date, INTERVAL 1 DAY)
-      GROUP BY mr2.name
-    ), 0) AS morning_dev,
-    COALESCE(SUM(mr.noon) - (
-      SELECT SUM(noon) 
-      FROM milk_records mr2 
-      WHERE mr2.name = mr.name AND mr2.date = DATE_SUB(mr.date, INTERVAL 1 DAY)
-      GROUP BY mr2.name
-    ), 0) AS noon_dev,
-    COALESCE(SUM(mr.evening) - (
-      SELECT SUM(evening) 
-      FROM milk_records mr2 
-      WHERE mr2.name = mr.name AND mr2.date = DATE_SUB(mr.date, INTERVAL 1 DAY)
-      GROUP BY mr2.name
-    ), 0) AS evening_dev,
-    COALESCE((SUM(mr.morning + mr.noon + mr.evening)) - (
-      SELECT SUM(morning + noon + evening) 
-      FROM milk_records mr2 
-      WHERE mr2.name = mr.name AND mr2.date = DATE_SUB(mr.date, INTERVAL 1 DAY)
-      GROUP BY mr2.name
-    ), 0) AS total_dev
-    FROM milk_records mr 
-    JOIN cows c ON mr.name = c.id
-    GROUP BY mr.date, c.name
-    ORDER BY mr.date DESC, c.name ASC";
- 
+                    // Predefined price per liter
+                    $pricePerLiter = 55; // Example price
 
-                $milkResult = $conn->query($milkQuery);
+                    // SQL query with deviation calculations for the current date
+                    $milkQuery = "
+                    SELECT mr.date, c.name, 
+                           SUM(mr.morning) AS morning, 
+                           SUM(mr.noon) AS noon, 
+                           SUM(mr.evening) AS evening,
+                           SUM(mr.morning + mr.noon + mr.evening) AS total,
+                           COALESCE(SUM(mr.morning) - (
+                               SELECT SUM(morning) 
+                               FROM milk_records mr2 
+                               WHERE mr2.name = mr.name AND mr2.date = DATE_SUB(mr.date, INTERVAL 1 DAY)
+                               GROUP BY mr2.name
+                           ), 0) AS morning_dev,
+                           COALESCE(SUM(mr.noon) - (
+                               SELECT SUM(noon) 
+                               FROM milk_records mr2 
+                               WHERE mr2.name = mr.name AND mr2.date = DATE_SUB(mr.date, INTERVAL 1 DAY)
+                               GROUP BY mr2.name
+                           ), 0) AS noon_dev,
+                           COALESCE(SUM(mr.evening) - (
+                               SELECT SUM(evening) 
+                               FROM milk_records mr2 
+                               WHERE mr2.name = mr.name AND mr2.date = DATE_SUB(mr.date, INTERVAL 1 DAY)
+                               GROUP BY mr2.name
+                           ), 0) AS evening_dev,
+                           COALESCE((SUM(mr.morning + mr.noon + mr.evening)) - (
+                               SELECT SUM(morning + noon + evening) 
+                               FROM milk_records mr2 
+                               WHERE mr2.name = mr.name AND mr2.date = DATE_SUB(mr.date, INTERVAL 1 DAY)
+                               GROUP BY mr2.name
+                           ), 0) AS total_dev
+                    FROM milk_records mr 
+                    JOIN cows c ON mr.name = c.id
+                    WHERE mr.date = '$currentDate'
+                    GROUP BY mr.date, c.name
+                    ORDER BY c.name ASC"; 
 
-                $dailySummary = [
-                    'total' => 0,
-                    'count' => 0,
-                    'yields' => []
-                ];
+                    $milkResult = $conn->query($milkQuery);
 
-                while ($record = $milkResult->fetch_assoc()) {
-                    $date = $record['date'];
-                    $name = $record['name'];
-                    $morning = $record['morning'];
-                    $noon = $record['noon'];
-                    $evening = $record['evening'];
-                    $total = $record['total'];
-                    $morning_dev = $record['morning_dev'];
-                    $noon_dev = $record['noon_dev'];
-                    $evening_dev = $record['evening_dev'];
-                    $total_dev = $record['total_dev'];
+                    $dailySummary = [
+                        'total' => 0,
+                        'count' => 0,
+                        'yields' => []
+                    ];
 
-                    $dailySummary['total'] += $total;
-                    $dailySummary['count'] += 1;
-                    $dailySummary['yields'][] = $total;
+                    while ($record = $milkResult->fetch_assoc()) {
+                        $date = $record['date'];
+                        $name = $record['name'];
+                        $morning = $record['morning'];
+                        $noon = $record['noon'];
+                        $evening = $record['evening'];
+                        $total = $record['total'];
+                        $morning_dev = $record['morning_dev'];
+                        $noon_dev = $record['noon_dev'];
+                        $evening_dev = $record['evening_dev'];
+                        $total_dev = $record['total_dev'];
 
-                    echo "<tr>";
-                    echo "<td>$date</td>";
-                    echo "<td>$name</td>";
-                    echo "<td>$morning <span class='" . (($morning_dev >= 0) ? 'text-green-500' : 'text-red-500') . "'>" . (($morning_dev >= 0) ? '+' : '') . "$morning_dev</span></td>";
-                    echo "<td>$noon <span class='" . (($noon_dev >= 0) ? 'text-green-500' : 'text-red-500') . "'>" . (($noon_dev >= 0) ? '+' : '') . "$noon_dev</span></td>";
-                    echo "<td>$evening <span class='" . (($evening_dev >= 0) ? 'text-green-500' : 'text-red-500') . "'>" . (($evening_dev >= 0) ? '+' : '') . "$evening_dev</span></td>";
-                    echo "<td>$total <span class='" . (($total_dev >= 0) ? 'text-green-500' : 'text-red-500') . "'>" . (($total_dev >= 0) ? '+' : '') . "$total_dev</span></td>";
-                    echo "</tr>";
+                        $dailySummary['total'] += $total;
+                        $dailySummary['count'] += 1;
+                        $dailySummary['yields'][] = $total;
+
+                        echo "<tr>";
+                        echo "<td>$date</td>";
+                        echo "<td>$name</td>";
+                        echo "<td>$morning <span class='" . (($morning_dev >= 0) ? 'text-green-500' : 'text-red-500') . "'>" . (($morning_dev >= 0) ? '+' : '') . "$morning_dev</span></td>";
+                        echo "<td>$noon <span class='" . (($noon_dev >= 0) ? 'text-green-500' : 'text-red-500') . "'>" . (($noon_dev >= 0) ? '+' : '') . "$noon_dev</span></td>";
+                        echo "<td>$evening <span class='" . (($evening_dev >= 0) ? 'text-green-500' : 'text-red-500') . "'>" . (($evening_dev >= 0) ? '+' : '') . "$evening_dev</span></td>";
+                        echo "<td>$total <span class='" . (($total_dev >= 0) ? 'text-green-500' : 'text-red-500') . "'>" . (($total_dev >= 0) ? '+' : '') . "$total_dev</span></td>";
+                        echo "</tr>";
                     }
-            // Calculate summary data
-            $totalYields = array_sum($dailySummary['yields']);
-            $numberOfCows = $dailySummary['count'];
-            $lowestYield = min($dailySummary['yields']);
-            $highestYield = max($dailySummary['yields']);
-            $averageYield = $totalYields / $numberOfCows;
 
-            ?>
-            </tbody>
-        </table>
+                    // Calculate summary data
+                    $totalYields = array_sum($dailySummary['yields']);
+                    $numberOfCows = $dailySummary['count'];
+                    $lowestYield = min($dailySummary['yields']);
+                    $highestYield = max($dailySummary['yields']);
+                    $averageYield = $totalYields / $numberOfCows;
+
+                    // Calculate production value
+                    $productionValue = $totalYields * $pricePerLiter;
+
+                    ?>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="summary">
+            <h2>Daily Summary for <?php echo $currentDate; ?></h2>
+            <p>Total Yields: <?php echo $totalYields; ?></p>
+            <p>No of Cows: <?php echo $numberOfCows; ?></p>
+            <p>Lowest Yield: <?php echo $lowestYield; ?></p>
+            <p>Highest Yield: <?php echo $highestYield; ?></p>
+            <p>Average Yield: <?php echo number_format($averageYield, 2); ?></p>
+            <p>Production Value: <?php echo number_format($productionValue, 2); ?></p>
+        </div>
     </div>
-    <div class="summary">
-        <h2>Daily Summary for <?php echo $currentDate; ?></h2>
-        <p>Total Yields: <?php echo $totalYields; ?></p>
-        <p>No of Cows: <?php echo $numberOfCows; ?></p>
-        <p>Lowest Yield: <?php echo $lowestYield; ?></p>
-        <p>Highest Yield: <?php echo $highestYield; ?></p>
-        <p>Average Yield: <?php echo number_format($averageYield, 2); ?></p>
-    </div>
-</div>
 </body>
 </html>
