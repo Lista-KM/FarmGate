@@ -14,12 +14,13 @@ if ($conn->connect_error) {
 }
 
 // Query to fetch data from daily_feeding table
-$query = "SELECT feed_date, item_name, quantity, group_name, unit, unit_price FROM daily_feeding";
+$query = "SELECT df.feed_date, df.item_name, df.quantity, df.group_name, sl.unit_price 
+          FROM daily_feeding df 
+          JOIN stock_levels sl ON df.item_name = sl.feed_name";
 $result = $conn->query($query);
 
-// Predefined values
+// Predefined value for unit of measure
 $unit = "kg";
-$unit_price = 200;
 
 // Array to store group-wise totals
 $group_totals = array();
@@ -115,10 +116,10 @@ tfoot tr {
               echo "<td class='py-3 px-6 text-left'>" . htmlspecialchars($row['quantity']) . "</td>";
               echo "<td class='py-3 px-6 text-left'>" . htmlspecialchars($row['group_name']) . "</td>";
               echo "<td class='py-3 px-4'>" . htmlspecialchars($unit) . "</td>";
-              echo "<td class='py-3 px-4'>" . htmlspecialchars($unit_price) . "</td>";
+              echo "<td class='py-3 px-4'>" . htmlspecialchars($row['unit_price']) . "</td>";
               
               // Calculate consumption amount
-              $consumption_ksh = $unit_price * $row['quantity'];
+              $consumption_ksh = $row['unit_price'] * $row['quantity'];
               echo "<td class='py-3 px-4'>" . htmlspecialchars($consumption_ksh) . "</td>";
               echo "</tr>";
               
@@ -148,5 +149,3 @@ tfoot tr {
   </table>
   
 </div>
-
-  

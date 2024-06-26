@@ -295,175 +295,45 @@ tfoot tr {
     </style>
 </head>
 <body>
-    <div class="p-4">
-        <h2 class="text-xl font-semibold mb-4">Financial Summary</h2>
-        <div class="grid grid-cols-3 gap-4 mb-4">
-            <!-- Total Expenses, Total Income, Profit margin sections -->
-            <div class="bg-blue-500 text-white p-4 rounded">
-                <div class="flex items-center">
-                    <div class="flex-1">
-                        <p id="total-expenses" class="text-xl">Ksh 0.00</p>
-                        <p>Total Expenses</p>
-                    </div>
-                </div>
-            </div>
-            <div class="bg-yellow-500 text-white p-4 rounded">
-                <div class="flex items-center">
-                    <div class="flex-1">
-                        <p id="total-income" class="text-xl">Ksh 0.00</p>
-                        <p>Total Income</p>
-                    </div>
-                </div>
-            </div>
-            <div class="bg-purple-500 text-white p-4 rounded">
-                <div class="flex items-center">
-                    <div class="flex-1">
-                        <p id="profit-margin" class="text-xl">Ksh 0.00</p>
-                        <p>Profit margin</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        Feeding Expenses Breakdown
-        <table id="feeding-expense-table" class="min-w-full bg-white border">
-<!-- Placeholder rows for group-wise totals -->
-<?php
-// Database connection (replace with your database credentials)
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "dfsms";
-
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-
-// Query to fetch data from daily_feeding table
-$query = "SELECT feed_date, item_name, quantity, group_name, unit, unit_price FROM daily_feeding";
-$result = $conn->query($query);
-
-// Predefined values
-$unit = "kg";
-$unit_price = 200;
-
-// Array to store group-wise totals
-$group_totals = array();
-
-?>
-
-  
-  <table class="min-w-full bg-white border">
-    <thead>
-      <tr class="bg-zinc-200 text-zinc-600 uppercase text-sm leading-normal">
-        <th class="py-3 px-6 text-left">Date</th>
-        <th class="py-3 px-6 text-left">Item</th>
-        <th class="py-3 px-6 text-left">Consumed</th>
-        <th class="py-3 px-6 text-left">Group</th>
-        <th class="py-3 px-4 text-left">Unit</th>
-        <th class="py-3 px-4 text-left">Unit Price</th>
-        <th class="py-3 px-4 text-left">Consumption(Ksh)</th>
-      </tr>
-    </thead>
-    <tbody class="text-zinc-600 text-sm font-light">
-      <?php
-      if ($result->num_rows > 0) {
-          while ($row = $result->fetch_assoc()) {
-              echo "<tr class='border-b border-zinc-200 hover:bg-zinc-100'>";
-              echo "<td class='py-3 px-6 text-left'>" . htmlspecialchars($row['feed_date']) . "</td>";
-              echo "<td class='py-3 px-6 text-left'>" . htmlspecialchars($row['item_name']) . "</td>";
-              echo "<td class='py-3 px-6 text-left'>" . htmlspecialchars($row['quantity']) . "</td>";
-              echo "<td class='py-3 px-6 text-left'>" . htmlspecialchars($row['group_name']) . "</td>";
-              echo "<td class='py-3 px-4'>" . htmlspecialchars($unit) . "</td>";
-              echo "<td class='py-3 px-4'>" . htmlspecialchars($unit_price) . "</td>";
-              
-              // Calculate consumption amount
-              $consumption_ksh = $unit_price * $row['quantity'];
-              echo "<td class='py-3 px-4'>" . htmlspecialchars($consumption_ksh) . "</td>";
-              echo "</tr>";
-              
-              // Accumulate totals per group
-              $group_name = $row['group_name'];
-              if (!isset($group_totals[$group_name])) {
-                  $group_totals[$group_name] = 0;
-              }
-              $group_totals[$group_name] += $consumption_ksh;
-          }
-      } else {
-          echo "<tr><td colspan='5' class='py-3 px-6 text-left'>No records found</td></tr>";
-      }
-      ?>
-    </tbody>
-    <tfoot>
-      <?php
-      // Display total consumption per group
-      foreach ($group_totals as $group_name => $total) {
-          echo "<tr>";
-          echo "<td colspan='6' class='py-3 px-6 text-right font-bold'>Total Consumption for " . htmlspecialchars($group_name) . ":</td>";
-          echo "<td class='py-3 px-4 font-bold'>" . htmlspecialchars($total) . "</td>";
-          echo "</tr>";
-      }
-      ?>
-    </tfoot>
-  </table>
-  
+<div class="p-4">
+    <h2 class="text-xl font-semibold mb-4">Financial Summary</h2>
+    <div class="flex justify-end mb-4">
+        <button onclick="navigateToAddExpense()" class="bg-yellow-500 text-white px-6 py-3 rounded-lg">Add Other Expenses</button>
+    </div>
+    <div class="flex justify-end mb-4">
+    <button onclick="navigateToAddIncome()" class="bg-yellow-500 text-white px-6 py-3 rounded-lg">Add Other Income</button>
 </div>
-
-</table>
-
-        <!-- Grid layout for income and expenses sections -->
-      <!--  <div class="grid-two">
-    <!-- Expenses breakdown -->
-    <!--<div class="expenses-section">
-        <div class="bg-zinc-800 text-white p-2 rounded-t">Expenses breakdown</div>
-        
-     
-        <div class="bg-blue-100 p-2 border-b border-zinc-300" id="feeding-expense">
-            Feeding Expenses <span class="float-right" id="feeding-expense-value">Ksh 0.00</span>
-        </div>
-        <div class="bg-blue-100 p-2 border-b border-zinc-300" id="breeding-expense">
-            Breeding Expenses <span class="float-right" id="breeding-expense-value">Ksh 0.00</span>
-        </div>
-        <div class="bg-blue-100 p-2 border-b border-zinc-300" id="health-expense">
-            Health Expenses <span class="float-right" id="health-expense-value">Ksh 0.00</span>
-        </div>
-        <div class="bg-blue-100 p-2 border-b border-zinc-300" id="fuel-expense">
-            Fuel Expenses <span class="float-right" id="fuel-expense-value">Ksh 0.00</span>
-        </div>
-        <div class="bg-blue-100 p-2 border-b border-zinc-300" id="salaries">
-            Salaries <span class="float-right" id="salaries-value">Ksh 0.00</span>
-        </div>
-        <div class="bg-blue-100 p-2" id="other-expense">
-            Other Expense <span class="float-right" id="other-expense-value">Ksh 0.00</span>
-        </div>
-        <div class="bg-blue-100 p-2" id="total-expenses">
-            Total Expenses <span class="float-right" id="total-expenses-value">Ksh 0.00</span>
-        </div>
-    </div>
-</div> -->
-
-
-            <!-- Income breakdown -->
-            <div class="income-section">
-                <div class="bg-zinc-800 text-white p-2 rounded-t"></div>
-                <!-- Placeholder rows for income breakdown -->
-                <div class="bg-blue-100 p-2 border-b border-zinc-300">
-                   <!-- Income from milk sale: Ksh 0.00 -->
+    <div class="grid grid-cols-3 gap-4 mb-4">
+        <!-- Total Expenses, Total Income, Profit margin sections -->
+        <div class="bg-blue-500 text-white p-4 rounded">
+            <div class="flex items-center">
+                <div class="flex-1">
+                    <p id="total-expenses" class="text-xl">Ksh 0.00</p>
+                    <p>Farm's Gross Margin</p>
                 </div>
-                <div class="bg-blue-100 p-2">
-                   <!-- Income from cow sale: Ksh 0.00 -->
+            </div>
+        </div>
+        <div class="bg-yellow-500 text-white p-4 rounded">
+            <div class="flex items-center">
+                <div class="flex-1">
+                    <p id="total-income" class="text-xl">Ksh 0.00</p>
+                    <p>Total Income</p>
                 </div>
-                <div class="bg-blue-100 p-2">
-                    <!--Income from other sources: Ksh 0.00 -->
+            </div>
+        </div>
+        <div class="bg-purple-500 text-white p-4 rounded">
+            <div class="flex items-center">
+                <div class="flex-1">
+                    <p id="profit-margin" class="text-xl">Ksh 0.00</p>
+                    <p>Profit margin</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <body>
+    
+
+    
     <div class="container">
         <div class="header">
            <!-- <h1>Milk Records</h1>
@@ -579,18 +449,308 @@ $group_totals = array();
             <p>Production Value: <?php echo number_format($productionValue, 2); ?></p>
         </div>
     </div>
+    
 </body>
 </html>
+<body class="bg-gray-100">
+
+<div class="container mx-auto mt-8">
+    <h1 class="text-2xl font-bold mb-4">Daily Feeding Summary</h1>
+    <table class="min-w-full bg-white border border-gray-300">
+        <thead>
+            <tr class="w-full bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+                <th class="py-3 px-6 text-left">Date</th>
+                <th class="py-3 px-6 text-left">Item Name</th>
+                <th class="py-3 px-6 text-left">Quantity</th>
+                <th class="py-3 px-6 text-left">Group</th>
+                <th class="py-3 px-4">Unit</th>
+                <th class="py-3 px-4">Unit Price</th>
+                <th class="py-3 px-4">Consumption (Ksh)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+            $servername = "localhost";
+            $username = "root";
+            $password = "";
+            $dbname = "dfsms";
+
+            $conn = new mysqli($servername, $username, $password, $dbname);
+            if ($conn->connect_error) {
+                die("Connection failed: " . $conn->connect_error);
+            }
+
+            $currentDate = date('Y-m-d');
+
+            $query = "SELECT df.feed_date, df.item_name, df.quantity, df.group_name, sl.unit_price 
+                      FROM daily_feeding df 
+                      JOIN stock_levels sl ON df.item_name = sl.feed_name
+                      WHERE df.feed_date = '$currentDate'";
+            $result = $conn->query($query);
+
+            $unit = "kg";
+            $group_totals = array();
+
+            if ($result->num_rows > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    echo "<tr class='border-b border-zinc-200 hover:bg-zinc-100'>";
+                    echo "<td class='py-3 px-6 text-left'>" . htmlspecialchars($row['feed_date']) . "</td>";
+                    echo "<td class='py-3 px-6 text-left'>" . htmlspecialchars($row['item_name']) . "</td>";
+                    echo "<td class='py-3 px-6 text-left'>" . htmlspecialchars($row['quantity']) . "</td>";
+                    echo "<td class='py-3 px-6 text-left'>" . htmlspecialchars($row['group_name']) . "</td>";
+                    echo "<td class='py-3 px-4'>" . htmlspecialchars($unit) . "</td>";
+                    echo "<td class='py-3 px-4'>" . htmlspecialchars($row['unit_price']) . "</td>";
+
+                    $consumption_ksh = $row['unit_price'] * $row['quantity'];
+                    echo "<td class='py-3 px-4'>" . htmlspecialchars($consumption_ksh) . "</td>";
+                    echo "</tr>";
+
+                    $group_name = $row['group_name'];
+                    if (!isset($group_totals[$group_name])) {
+                        $group_totals[$group_name] = 0;
+                    }
+                    $group_totals[$group_name] += $consumption_ksh;
+                }
+            } else {
+                echo "<tr><td colspan='7' class='py-3 px-6 text-left'>No records found for today</td></tr>";
+            }
+            ?>
+        </tbody>
+    </table>
+
+    <div class="summary mt-8">
+        <h2 class="text-xl font-bold">Group-wise Consumption Totals</h2>
+        <?php if (!empty($group_totals)): ?>
+            <?php foreach ($group_totals as $group_name => $consumption_total): ?>
+                <p><?php echo htmlspecialchars($group_name); ?>: Ksh <?php echo number_format($consumption_total, 2); ?></p>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <p>No data</p>
+        <?php endif; ?>
+    </div>
+
+    
+    <div class="summary mt-8">
+    <h2 class="text-xl font-bold">Group-wise Profit Margins</h2>
+    <?php
+    // Include the milk production value section
+    include("../includes/config.php");
+
+    $pricePerLiter = 55; // Example price
+
+    // Query to fetch production value from milk records
+    $milkQuery = "
+    SELECT SUM(mr.morning + mr.noon + mr.evening) AS total
+    FROM milk_records mr 
+    WHERE mr.date = '$currentDate'"; 
+
+    $milkResult = $conn->query($milkQuery);
+    $productionValue = 0;
+
+    if ($milkResult->num_rows > 0) {
+        $record = $milkResult->fetch_assoc();
+        $totalYields = $record['total'];
+        $productionValue = $totalYields * $pricePerLiter;
+    }
+
+    if (!empty($group_totals)) {
+        foreach ($group_totals as $group_name => $consumption_total) {
+            // Initialize total expenses for the group
+            $total_group_expenses = 0;
+
+            // Initialize income for each group
+            $income = 0;
+
+            // Assign income based on group
+            if ($group_name === "milker") {
+                // Calculate income for milkers based on milk production
+                $income = $productionValue;
+            } else {
+                // Fetch income from other_income table for non-milkers
+                $sql_other_income = "SELECT income_amount FROM other_income WHERE cow_group_id = (SELECT id FROM cow_groups WHERE group_name = '$group_name') AND income_date = '$currentDate'";
+                $result_other_income = $conn->query($sql_other_income);
+
+                if ($result_other_income->num_rows > 0) {
+                    $row = $result_other_income->fetch_assoc();
+                    $income = $row['income_amount'];
+                }
+                // If no income found for non-milker, income remains 0
+            }
+
+            // Query to fetch expenses for the current group
+            $sql_group_expenses = "SELECT SUM(e.expense_amount) AS total_amount 
+                                   FROM expenses e
+                                   INNER JOIN cow_groups cg ON e.cow_group_id = cg.id
+                                   WHERE cg.group_name = '$group_name'
+                                   AND DATE(e.expense_date) = '$currentDate'";
+
+            $result_group_expenses = $conn->query($sql_group_expenses);
+
+            if ($result_group_expenses->num_rows > 0) {
+                $row = $result_group_expenses->fetch_assoc();
+                $total_group_expenses = $row['total_amount'];
+            }
+            // If no expenses found, total_group_expenses remains 0
+
+            // Calculate profit margin for each group
+            $profit_margin = $income - ($consumption_total + $total_group_expenses);
+
+            // Output profit margin in separate div for each group
+            echo '<div class="group-profit-margin">';
+            echo "<h3>" . htmlspecialchars($group_name) . " Profit Margin:</h3>";
+            echo "<p>Ksh " . number_format($profit_margin, 2) . "</p>";
+            echo '</div>';
+        }
+    } else {
+        echo "<p>No data in \$group_totals array</p>"; // Debug message if $group_totals is empty
+    }
+    ?>
+</div>
 
 
-    <script>
+
+
+
+
+
+
+</body>
+<div class="grid-two">
+    <div class="expenses-section">
+        <div class="bg-zinc-800 text-white p-2 rounded-t">Expenses breakdown</div>
+        <?php
+        $sql_expenses = "SELECT cg.group_name, e.expense_type, SUM(e.expense_amount) AS total_amount 
+                         FROM expenses e
+                         INNER JOIN cow_groups cg ON e.cow_group_id = cg.id
+                         WHERE DATE(e.expense_date) = '$currentDate'
+                         GROUP BY e.expense_type, e.cow_group_id";
+        $result_expenses = $conn->query($sql_expenses);
+
+        $total_expenses = 0;
+
+        if ($result_expenses->num_rows > 0) {
+            while ($row = $result_expenses->fetch_assoc()) {
+                $group_name = $row['group_name'];
+                $expense_type = $row['expense_type'];
+                $total_amount = $row['total_amount'];
+                $total_expenses += $total_amount;
+                if (!isset($group_expenses[$group_name])) {
+                    $group_expenses[$group_name] = 0;
+                }
+                $group_expenses[$group_name] += $total_amount;
+        ?>
+        <div class="bg-blue-100 p-2 border-b border-zinc-300">
+            <?php echo $expense_type; ?> (<?php echo $group_name; ?>) 
+            <span class="float-right">Ksh <?php echo number_format($total_amount, 2); ?></span>
+        </div>
+        <?php
+            }
+        } else {
+            echo '<div class="bg-blue-100 p-2">No data</div>';
+        }
+        ?>
+        <div class="bg-blue-100 p-2" id="total-expenses">
+            Total Expenses <span class="float-right">Ksh <?php echo number_format($total_expenses, 2); ?></span>
+        </div>
+    </div>
+
+    <div class="income-section">
+    <div class="bg-zinc-800 text-white p-2 rounded-t">Income breakdown</div>
+    <?php
+    // Database connection details
+    $servername = "localhost";
+    $username = "root";
+    $password = "";
+    $dbname = "dfsms";
+
+    // Create connection
+    $conn = new mysqli($servername, $username, $password, $dbname);
+
+    // Check connection
+    if ($conn->connect_error) {
+        die("Connection failed: " . $conn->connect_error);
+    }
+
+    // Get current date
+    $currentDate = date("Y-m-d");
+
+    // Query to get total income from other sources for the current date
+    $sql_other_income = "SELECT oi.income_type, oi.income_amount, oi.cow_group_id, cg.group_name
+                         FROM other_income oi
+                         LEFT JOIN cow_groups cg ON oi.cow_group_id = cg.id
+                         WHERE oi.income_date = '$currentDate'";
+    $result_other_income = $conn->query($sql_other_income);
+
+    if ($result_other_income === false) {
+        echo "Error: " . $conn->error;
+    }
+
+    // Initialize variables
+    $total_other_income = 0;
+    $other_income_rows = [];
+
+    if ($result_other_income->num_rows > 0) {
+        while ($row = $result_other_income->fetch_assoc()) {
+            $other_income_rows[] = $row;
+            $total_other_income += $row['income_amount'];
+        }
+    }
+
+    // Display income from milk sale
+    $sql_milk_income = "SELECT SUM(total) AS total_milk_income
+                        FROM milk_records
+                        WHERE date = '$currentDate'";
+    $result_milk_income = $conn->query($sql_milk_income);
+
+    if ($result_milk_income === false) {
+        echo "Error: " . $conn->error;
+    }
+
+    $total_milk_income = 0;
+    if ($result_milk_income->num_rows > 0) {
+        $row_milk_income = $result_milk_income->fetch_assoc();
+        $total_milk_income = $row_milk_income['total_milk_income'];
+    }
+
+    // Close connection
+    $conn->close();
+    ?>
+
+   
+
+    <?php if (!empty($other_income_rows)): ?>
+        <?php foreach ($other_income_rows as $row): ?>
+            <div class="bg-blue-100 p-2">
+                <?php
+                $incomeType = $row['income_type'];
+                $groupName = $row['group_name'];
+                $incomeAmount = number_format($row['income_amount'], 2);
+                ?>
+                <?php echo $incomeType; ?> (Group: <?php echo $groupName; ?>): Ksh <?php echo $incomeAmount; ?>
+            </div>
+        <?php endforeach; ?>
+    <?php else: ?>
+        <div class="bg-blue-100 p-2">
+            Income from other sources: No data
+        </div>
+    <?php endif; ?>
+
+    <div class="bg-blue-100 p-2">
+        Total Other Income: Ksh <?php echo number_format($total_other_income, 2); ?>
+    </div>
+</div>
+
+
+  
+   
+<script>
     // Function to calculate total consumption by group
     function calculateTotalConsumption() {
         const table = document.getElementById('feeding-expense-table');
         if (!table) return; // Ensure the table exists
 
         const rows = table.getElementsByTagName('tr');
-        let helperTotal = 0;
+        let heiferTotal = 0;
         let milkerTotal = 0;
         let calfTotal = 0;
 
@@ -604,8 +764,8 @@ $group_totals = array();
 
             // Accumulate totals based on group
             switch (group) {
-                case 'helper':
-                    helperTotal += quantity;
+                case 'heifer':
+                    heiferTotal += quantity;
                     break;
                 case 'milker':
                     milkerTotal += quantity;
@@ -618,40 +778,54 @@ $group_totals = array();
             }
         }
 
-        // Update totals in the UI
-        document.getElementById('helper-total').textContent = `Helper: ${helperTotal.toFixed(2)} kg`;
-        document.getElementById('milker-total').textContent = `Milker: ${milkerTotal.toFixed(2)} kg`;
-        document.getElementById('calf-total').textContent = `Calf: ${calfTotal.toFixed(2)} kg`;
+        // Display totals
+        document.getElementById('heifer-total').innerText = `Total Consumption for Heifer: Ksh ${heiferTotal.toFixed(2)}`;
+        document.getElementById('milker-total').innerText = `Total Consumption for Milker: Ksh ${milkerTotal.toFixed(2)}`;
+        document.getElementById('calf-total').innerText = `Total Consumption for Calf: Ksh ${calfTotal.toFixed(2)}`;
     }
 
     // Call the function when the page is loaded
     window.addEventListener('load', calculateTotalConsumption);
-
-   // document.addEventListener('DOMContentLoaded', function() {
-    // Sample data (replace with actual dynamic data fetching and calculation)
-  //   const feedingExpense = 5000;
-   //  const breedingExpense = 3000;
-  //   const healthExpense = 2000;
-   //  const fuelExpense = 1500;
-  //   const salariesExpense = 4000;
-  //   const otherExpense = 1000;
-
-    // Calculate total expenses
-  //   const totalExpenses = feedingExpense + breedingExpense + healthExpense + fuelExpense + salariesExpense + otherExpense;
-
-    // Update each expense category value
-   //  document.getElementById('feeding-expense-value').textContent = `Ksh ${feedingExpense.toFixed(2)}`;
-   //  document.getElementById('breeding-expense-value').textContent = `Ksh ${breedingExpense.toFixed(2)}`;
-   //  document.getElementById('health-expense-value').textContent = `Ksh ${healthExpense.toFixed(2)}`;
-   //  document.getElementById('fuel-expense-value').textContent = `Ksh ${fuelExpense.toFixed(2)}`;
-   //  document.getElementById('salaries-value').textContent = `Ksh ${salariesExpense.toFixed(2)}`;
-   //  document.getElementById('other-expense-value').textContent = `Ksh ${otherExpense.toFixed(2)}`;
-
-    // Update total expenses value
-    // document.getElementById('total-expenses-value').textContent = `Ksh ${totalExpenses.toFixed(2)}`;
- //});
-
 </script>
 
+<script>
+    // Function to calculate profit margins for each group
+    function calculateProfitMargins() {
+        // Mock fetching income values from backend or HTML elements
+        const incomeHeifer = parseFloat(document.getElementById('income-heifer').innerText.replace('Ksh', '').trim());
+        const incomeMilker = parseFloat(document.getElementById('income-milker').innerText.replace('Ksh', '').trim());
+        const incomeCalf = parseFloat(document.getElementById('income-calf').innerText.replace('Ksh', '').trim());
+
+        // Fetching expense values from previously calculated totals
+        const expensesHeifer = parseFloat(document.getElementById('heifer-total').innerText.replace('Ksh', '').trim());
+        const expensesMilker = parseFloat(document.getElementById('milker-total').innerText.replace('Ksh', '').trim());
+        const expensesCalf = parseFloat(document.getElementById('calf-total').innerText.replace('Ksh', '').trim());
+
+        // Calculating profit margins
+        const profitHeifer = incomeHeifer - expensesHeifer;
+        const profitMilker = incomeMilker - expensesMilker;
+        const profitCalf = incomeCalf - expensesCalf;
+
+        // Updating the profit margin display
+        document.getElementById('profit-heifer').innerText = `Profit Margin for Heifer: Ksh ${profitHeifer.toFixed(2)}`;
+        document.getElementById('profit-milker').innerText = `Profit Margin for Milker: Ksh ${profitMilker.toFixed(2)}`;
+        document.getElementById('profit-calf').innerText = `Profit Margin for Calf: Ksh ${profitCalf.toFixed(2)}`;
+    }
+
+    // Call the function when the page is loaded
+    window.addEventListener('load', calculateProfitMargins);
+</script>
+<script>
+    function navigateToAddExpense() {
+        // Redirect to addexpenses.php
+        window.location.href = 'addexpenses.php';
+    }
+</script>
+<script>
+    function navigateToAddIncome() {
+        // Replace 'addotherincome.php' with the actual URL of your add other income page
+        window.location.href = 'addotherincome.php';
+    }
+</script>
 </body>
 </html>
