@@ -145,6 +145,47 @@ if ($stmt) {
             transition: 0.5s;
             padding-top: 70px; /* Adjust to make space for the button */
         }
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropbtn {
+           
+            color: white;
+            padding: 16px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+        }
+
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #f1f1f1;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown:hover .dropbtn {
+            background-color: #3e8e41;
+        }
     </style>
 </head>
 
@@ -159,7 +200,14 @@ if ($stmt) {
         <li><a href="users.php">User Management</a></li>
         <li><a href="feeds.php">Feed Management</a></li>
         <li><a href="#">Animal Health</a></li>
-        <li><a href="farm_expenses.php">Farm Expenses</a></li>
+        <li class="dropdown">
+            <a href="#" class="dropbtn">Farm Financials</a>
+            <div class="dropdown-content">
+                <a href="farm_expenses.php">Expenses</a>
+                <a href="farm_income.php">Income</a>
+                <a href="grossmargins.php">Gross Margins</a>
+            </div>
+        </li>
         <li><a href="#">Breeding</a></li>
     </ul>
 </div>

@@ -27,7 +27,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($conn->query($sql) === TRUE) {
         // Redirect to farm_incomes.php on successful submission
-        header("Location: farm_expenses.php");
+        header("Location: farm_income.php");
         exit();
     } else {
         echo "Error: " . $sql . "<br>" . $conn->error;

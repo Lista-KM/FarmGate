@@ -21,7 +21,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             VALUES ('$cowId', '$date', '$milkQuantity')";
 
     if ($conn->query($sql) === TRUE) {
-        echo "New record created successfully";
+        echo "<script>
+                alert('New record created successfully');
+                window.location.href = 'milk.php';
+              </script>";
+        exit;
     } else {
         echo "Error: " . $sql . "<br>" . $conn->error;
     }
@@ -36,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <title>Add Milk Record Popup</title>
 
     <style>
-             body {
+        body {
             font-family: 'Inter', sans-serif;
             margin: 0;
             padding: 0;
@@ -106,10 +110,31 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         .popup .button:hover {
             background: #3b5baf;
         }
+
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            color: #FFFFFF;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .close-button:hover {
+            color: #ff0000;
+        }
     </style>
+    <script>
+        function closePopup() {
+            window.location.href = 'milk.php';
+        }
+    </script>
 </head>
 <body>
     <div class="popup">
+        <button class="close-button" onclick="closePopup()">X</button>
         <div class="title">Add Milk Record</div>
         
         <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">  

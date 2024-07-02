@@ -291,18 +291,40 @@ tfoot tr {
             font-size: 1rem;
             margin: 4px 0;
         }
+        .grid-two {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            width: 100%;
+            padding: 20px;
+            background-color: #f7f7f7; /* Light Gray */
+            border-radius: 8px;
+        }
+        .expenses-section, .income-section {
+            background-color: #f7f7f7; /* Light Gray */
+            border-radius: 8px;
+            padding: 20px;
+            width: 100%;
+        }
+        .expenses-section .bg-zinc-800, .income-section .bg-zinc-800 {
+            background-color: #d1d5db; /* Gray-300 */
+        }
+        .expenses-section .bg-blue-100, .income-section .bg-blue-100 {
+            background-color: #e5e7eb; /* Gray-200 */
+        }
+        .border-zinc-300 {
+            border-color: #d1d5db; /* Gray-300 */
+        }
 
     </style>
 </head>
-<body>
+<bo>
 <div class="p-4">
     <h2 class="text-xl font-semibold mb-4">Financial Summary</h2>
     <div class="flex justify-end mb-4">
         <button onclick="navigateToAddExpense()" class="bg-yellow-500 text-white px-6 py-3 rounded-lg">Add Other Expenses</button>
     </div>
-    <div class="flex justify-end mb-4">
-    <button onclick="navigateToAddIncome()" class="bg-yellow-500 text-white px-6 py-3 rounded-lg">Add Other Income</button>
-</div>
+   
     <div class="grid grid-cols-3 gap-4 mb-4">
         <!-- Total Expenses, Total Income, Profit margin sections -->
         <div class="bg-blue-500 text-white p-4 rounded">
@@ -334,124 +356,7 @@ tfoot tr {
     
 
     
-    <div class="container">
-        <div class="header">
-           <!-- <h1>Milk Records</h1>
-        </div>
-        
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Name</th>
-                        <th>Morning</th>
-                        <th>Noon</th>
-                        <th>Evening</th>
-                        <th>Total</th>
-                    </tr>
-                </thead>
-                <tbody> -->
-                    <?php
-                    include("../includes/config.php");
 
-                    $currentDate = date('Y-m-d');
-
-                    // Predefined price per liter
-                    $pricePerLiter = 55; // Example price
-
-                    // SQL query with deviation calculations for the current date
-                    $milkQuery = "
-                    SELECT mr.date, c.name, 
-                           SUM(mr.morning) AS morning, 
-                           SUM(mr.noon) AS noon, 
-                           SUM(mr.evening) AS evening,
-                           SUM(mr.morning + mr.noon + mr.evening) AS total,
-                           COALESCE(SUM(mr.morning) - (
-                               SELECT SUM(morning) 
-                               FROM milk_records mr2 
-                               WHERE mr2.name = mr.name AND mr2.date = DATE_SUB(mr.date, INTERVAL 1 DAY)
-                               GROUP BY mr2.name
-                           ), 0) AS morning_dev,
-                           COALESCE(SUM(mr.noon) - (
-                               SELECT SUM(noon) 
-                               FROM milk_records mr2 
-                               WHERE mr2.name = mr.name AND mr2.date = DATE_SUB(mr.date, INTERVAL 1 DAY)
-                               GROUP BY mr2.name
-                           ), 0) AS noon_dev,
-                           COALESCE(SUM(mr.evening) - (
-                               SELECT SUM(evening) 
-                               FROM milk_records mr2 
-                               WHERE mr2.name = mr.name AND mr2.date = DATE_SUB(mr.date, INTERVAL 1 DAY)
-                               GROUP BY mr2.name
-                           ), 0) AS evening_dev,
-                           COALESCE((SUM(mr.morning + mr.noon + mr.evening)) - (
-                               SELECT SUM(morning + noon + evening) 
-                               FROM milk_records mr2 
-                               WHERE mr2.name = mr.name AND mr2.date = DATE_SUB(mr.date, INTERVAL 1 DAY)
-                               GROUP BY mr2.name
-                           ), 0) AS total_dev
-                    FROM milk_records mr 
-                    JOIN cows c ON mr.name = c.id
-                    WHERE mr.date = '$currentDate'
-                    GROUP BY mr.date, c.name
-                    ORDER BY c.name ASC"; 
-
-                    $milkResult = $conn->query($milkQuery);
-
-                    $dailySummary = [
-                        'total' => 0,
-                        'count' => 0,
-                        'yields' => []
-                    ];
-
-                    while ($record = $milkResult->fetch_assoc()) {
-                        $date = $record['date'];
-                        $name = $record['name'];
-                        $morning = $record['morning'];
-                        $noon = $record['noon'];
-                        $evening = $record['evening'];
-                        $total = $record['total'];
-                        $morning_dev = $record['morning_dev'];
-                        $noon_dev = $record['noon_dev'];
-                        $evening_dev = $record['evening_dev'];
-                        $total_dev = $record['total_dev'];
-
-                        $dailySummary['total'] += $total;
-                        $dailySummary['count'] += 1;
-                        $dailySummary['yields'][] = $total;
-
-                        
-                    }
-
-                    // Calculate summary data
-                    $totalYields = array_sum($dailySummary['yields']);
-                    $numberOfCows = $dailySummary['count'];
-                    $lowestYield = min($dailySummary['yields']);
-                    $highestYield = max($dailySummary['yields']);
-                    $averageYield = $totalYields / $numberOfCows;
-
-                    // Calculate production value
-                    $productionValue = $totalYields * $pricePerLiter;
-
-                    ?>
-                </tbody>
-            </table>
-        </div>
-
-        <div class="summary">
-            <h2>Daily Summary for <?php echo $currentDate; ?></h2>
-            <p>Total Yields: <?php echo $totalYields; ?></p>
-            <p>No of Cows: <?php echo $numberOfCows; ?></p>
-            <p>Lowest Yield: <?php echo $lowestYield; ?></p>
-            <p>Highest Yield: <?php echo $highestYield; ?></p>
-            <p>Average Yield: <?php echo number_format($averageYield, 2); ?></p>
-            <p>Production Value: <?php echo number_format($productionValue, 2); ?></p>
-        </div>
-    </div>
-    
-</body>
-</html>
 <body class="bg-gray-100">
 
 <div class="container mx-auto mt-8">
@@ -517,7 +422,7 @@ tfoot tr {
             ?>
         </tbody>
     </table>
-
+    
     <div class="summary mt-8">
         <h2 class="text-xl font-bold">Group-wise Consumption Totals</h2>
         <?php if (!empty($group_totals)): ?>
@@ -529,219 +434,120 @@ tfoot tr {
         <?php endif; ?>
     </div>
 
-    
-    <div class="summary mt-8">
-    <h2 class="text-xl font-bold">Group-wise Profit Margins</h2>
-    <?php
-    // Include the milk production value section
-    include("../includes/config.php");
-
-    $pricePerLiter = 55; // Example price
-
-    // Query to fetch production value from milk records
-    $milkQuery = "
-    SELECT SUM(mr.morning + mr.noon + mr.evening) AS total
-    FROM milk_records mr 
-    WHERE mr.date = '$currentDate'"; 
-
-    $milkResult = $conn->query($milkQuery);
-    $productionValue = 0;
-
-    if ($milkResult->num_rows > 0) {
-        $record = $milkResult->fetch_assoc();
-        $totalYields = $record['total'];
-        $productionValue = $totalYields * $pricePerLiter;
-    }
-
-    if (!empty($group_totals)) {
-        foreach ($group_totals as $group_name => $consumption_total) {
-            // Initialize total expenses for the group
-            $total_group_expenses = 0;
-
-            // Initialize income for each group
-            $income = 0;
-
-            // Assign income based on group
-            if ($group_name === "milker") {
-                // Calculate income for milkers based on milk production
-                $income = $productionValue;
-            } else {
-                // Fetch income from other_income table for non-milkers
-                $sql_other_income = "SELECT income_amount FROM other_income WHERE cow_group_id = (SELECT id FROM cow_groups WHERE group_name = '$group_name') AND income_date = '$currentDate'";
-                $result_other_income = $conn->query($sql_other_income);
-
-                if ($result_other_income->num_rows > 0) {
-                    $row = $result_other_income->fetch_assoc();
-                    $income = $row['income_amount'];
-                }
-                // If no income found for non-milker, income remains 0
-            }
-
-            // Query to fetch expenses for the current group
-            $sql_group_expenses = "SELECT SUM(e.expense_amount) AS total_amount 
-                                   FROM expenses e
-                                   INNER JOIN cow_groups cg ON e.cow_group_id = cg.id
-                                   WHERE cg.group_name = '$group_name'
-                                   AND DATE(e.expense_date) = '$currentDate'";
-
-            $result_group_expenses = $conn->query($sql_group_expenses);
-
-            if ($result_group_expenses->num_rows > 0) {
-                $row = $result_group_expenses->fetch_assoc();
-                $total_group_expenses = $row['total_amount'];
-            }
-            // If no expenses found, total_group_expenses remains 0
-
-            // Calculate profit margin for each group
-            $profit_margin = $income - ($consumption_total + $total_group_expenses);
-
-            // Output profit margin in separate div for each group
-            echo '<div class="group-profit-margin">';
-            echo "<h3>" . htmlspecialchars($group_name) . " Profit Margin:</h3>";
-            echo "<p>Ksh " . number_format($profit_margin, 2) . "</p>";
-            echo '</div>';
-        }
-    } else {
-        echo "<p>No data in \$group_totals array</p>"; // Debug message if $group_totals is empty
-    }
-    ?>
-</div>
-
-
-
-
-
-
-
-
 </body>
+
+
+    
 <div class="grid-two">
-    <div class="expenses-section">
-        <div class="bg-zinc-800 text-white p-2 rounded-t">Expenses breakdown</div>
-        <?php
-        $sql_expenses = "SELECT cg.group_name, e.expense_type, SUM(e.expense_amount) AS total_amount 
-                         FROM expenses e
-                         INNER JOIN cow_groups cg ON e.cow_group_id = cg.id
-                         WHERE DATE(e.expense_date) = '$currentDate'
-                         GROUP BY e.expense_type, e.cow_group_id";
-        $result_expenses = $conn->query($sql_expenses);
+        <div class="expenses-section">
+            <div class="bg-zinc-800 text-black p-2 rounded-t"> Other Expenses breakdown</div>
+            <?php
+            include("../includes/config.php");
 
-        $total_expenses = 0;
+            $currentDate = date('Y-m-d');
 
-        if ($result_expenses->num_rows > 0) {
-            while ($row = $result_expenses->fetch_assoc()) {
-                $group_name = $row['group_name'];
-                $expense_type = $row['expense_type'];
-                $total_amount = $row['total_amount'];
-                $total_expenses += $total_amount;
-                if (!isset($group_expenses[$group_name])) {
-                    $group_expenses[$group_name] = 0;
-                }
-                $group_expenses[$group_name] += $total_amount;
-        ?>
-        <div class="bg-blue-100 p-2 border-b border-zinc-300">
-            <?php echo $expense_type; ?> (<?php echo $group_name; ?>) 
-            <span class="float-right">Ksh <?php echo number_format($total_amount, 2); ?></span>
-        </div>
-        <?php
-            }
-        } else {
-            echo '<div class="bg-blue-100 p-2">No data</div>';
-        }
-        ?>
-        <div class="bg-blue-100 p-2" id="total-expenses">
-            Total Expenses <span class="float-right">Ksh <?php echo number_format($total_expenses, 2); ?></span>
-        </div>
-    </div>
+            $sql_expenses = "SELECT cg.group_name, e.expense_type, SUM(e.expense_amount) AS total_amount 
+                             FROM expenses e
+                             INNER JOIN cow_groups cg ON e.cow_group_id = cg.id
+                             WHERE DATE(e.expense_date) = '$currentDate'
+                             GROUP BY e.expense_type, e.cow_group_id";
+            $result_expenses = $conn->query($sql_expenses);
 
-    <div class="income-section">
-    <div class="bg-zinc-800 text-white p-2 rounded-t">Income breakdown</div>
-    <?php
-    // Database connection details
-    $servername = "localhost";
-    $username = "root";
-    $password = "";
-    $dbname = "dfsms";
+            $total_expenses = 0;
+            $group_expenses = [];
 
-    // Create connection
-    $conn = new mysqli($servername, $username, $password, $dbname);
-
-    // Check connection
-    if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
-    }
-
-    // Get current date
-    $currentDate = date("Y-m-d");
-
-    // Query to get total income from other sources for the current date
-    $sql_other_income = "SELECT oi.income_type, oi.income_amount, oi.cow_group_id, cg.group_name
-                         FROM other_income oi
-                         LEFT JOIN cow_groups cg ON oi.cow_group_id = cg.id
-                         WHERE oi.income_date = '$currentDate'";
-    $result_other_income = $conn->query($sql_other_income);
-
-    if ($result_other_income === false) {
-        echo "Error: " . $conn->error;
-    }
-
-    // Initialize variables
-    $total_other_income = 0;
-    $other_income_rows = [];
-
-    if ($result_other_income->num_rows > 0) {
-        while ($row = $result_other_income->fetch_assoc()) {
-            $other_income_rows[] = $row;
-            $total_other_income += $row['income_amount'];
-        }
-    }
-
-    // Display income from milk sale
-    $sql_milk_income = "SELECT SUM(total) AS total_milk_income
-                        FROM milk_records
-                        WHERE date = '$currentDate'";
-    $result_milk_income = $conn->query($sql_milk_income);
-
-    if ($result_milk_income === false) {
-        echo "Error: " . $conn->error;
-    }
-
-    $total_milk_income = 0;
-    if ($result_milk_income->num_rows > 0) {
-        $row_milk_income = $result_milk_income->fetch_assoc();
-        $total_milk_income = $row_milk_income['total_milk_income'];
-    }
-
-    // Close connection
-    $conn->close();
-    ?>
-
-   
-
-    <?php if (!empty($other_income_rows)): ?>
-        <?php foreach ($other_income_rows as $row): ?>
-            <div class="bg-blue-100 p-2">
-                <?php
-                $incomeType = $row['income_type'];
-                $groupName = $row['group_name'];
-                $incomeAmount = number_format($row['income_amount'], 2);
-                ?>
-                <?php echo $incomeType; ?> (Group: <?php echo $groupName; ?>): Ksh <?php echo $incomeAmount; ?>
+            if ($result_expenses->num_rows > 0) {
+                while ($row = $result_expenses->fetch_assoc()) {
+                    $group_name = $row['group_name'];
+                    $expense_type = $row['expense_type'];
+                    $total_amount = $row['total_amount'];
+                    $total_expenses += $total_amount;
+                    if (!isset($group_expenses[$group_name])) {
+                        $group_expenses[$group_name] = 0;
+                    }
+                    $group_expenses[$group_name] += $total_amount;
+            ?>
+            <div class="bg-blue-100 p-2 border-b border-zinc-300">
+                <?php echo $expense_type; ?> (<?php echo $group_name; ?>) 
+                <span class="float-right">Ksh <?php echo number_format($total_amount, 2); ?></span>
             </div>
-        <?php endforeach; ?>
-    <?php else: ?>
-        <div class="bg-blue-100 p-2">
-            Income from other sources: No data
+            <?php
+                }
+            } else {
+                echo '<div class="bg-blue-100 p-2">No data</div>';
+            }
+            ?>
+            <div class="bg-blue-100 p-2" id="total-expenses">
+                Total Expenses <span class="float-right">Ksh <?php echo number_format($total_expenses, 2); ?></span>
+            </div>
         </div>
-    <?php endif; ?>
+        <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Total Expenses by Cow Group</title>
+    <!-- Tailwind CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+        .expense-block {
+            background-color: #f7f7f7; /* Light Gray */
+            border: 1px solid #d1d5db; /* Gray-300 */
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+        }
+        .expense-block h3 {
+            margin-bottom: 10px;
+        }
+        .expense-block p {
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto my-10">
+        <h1 class="text-3xl font-bold mb-6 text-center">Total Expenses by Cow Group</h1>
+        <div class="grid-container">
+            <!-- PHP calculations and results -->
+            <?php
+            // Initialize total expenses array
+            $totalExpenses = [];
 
-    <div class="bg-blue-100 p-2">
-        Total Other Income: Ksh <?php echo number_format($total_other_income, 2); ?>
+            // Iterate through group totals from feeding and other expenses
+            foreach ($group_totals as $group_name => $consumption_total) {
+                // Fetch other expenses total for the current group
+                $otherExpensesTotal = isset($group_expenses[$group_name]) ? $group_expenses[$group_name] : 0;
+
+                // Calculate total expenses (consumption + other expenses)
+                $totalGroupExpenses = $consumption_total + $otherExpensesTotal;
+
+                // Store total expenses for the group
+                $totalExpenses[$group_name] = $totalGroupExpenses;
+            }
+            ?>
+
+            <div class="grid-two">
+                <?php foreach ($totalExpenses as $group_name => $total_expense_amount): ?>
+                    <div class="expenses-section">
+                        <div class="bg-zinc-800 text-black p-2 rounded-t"><?php echo htmlspecialchars($group_name); ?> Expenses</div>
+                        <div class="bg-blue-100 p-2 border-b border-zinc-300">
+                            Total Expenses <span class="float-right">Ksh <?php echo number_format($total_expense_amount, 2); ?></span>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
     </div>
-</div>
+</body>
+</html>
 
-
-  
    
 <script>
     // Function to calculate total consumption by group
@@ -821,11 +627,6 @@ tfoot tr {
         window.location.href = 'addexpenses.php';
     }
 </script>
-<script>
-    function navigateToAddIncome() {
-        // Replace 'addotherincome.php' with the actual URL of your add other income page
-        window.location.href = 'addotherincome.php';
-    }
-</script>
+
 </body>
 </html>
